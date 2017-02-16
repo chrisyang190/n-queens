@@ -16,7 +16,6 @@
       } else {
         this.set('n', params.length);
       }
-      console.log(this);
     },
 
     rows: function() {

@@ -26,8 +26,9 @@ window.generateRows = function(n) {
 
     for (var i = 0; i < choices.length; i++) {
       var currentChoice = choices[i];
-      if (boardSoFar[boardSoFar.length - 1] !== currentChoice) { 
-      // if (_.uniq(boardSoFar.concat(currentChoice)) === boardSoFar.concat(currentChoice)) { 
+      // if (boardSoFar[boardSoFar.length - 1] !== currentChoice) { 
+      // if (boardSoFar[boardSoFar.length - 1] !== currentChoice && boardSoFar[0] !== currentChoice) {
+      if (_.uniq(boardSoFar.concat(currentChoice)).length === boardSoFar.concat(currentChoice).length) { 
         permutations(n - 1, boardSoFar.concat(currentChoice));
       }
     }
@@ -67,47 +68,25 @@ window.generateBoards = function(n) {
 
 
 
-window.findNRooksSolution = function(n) {
-  
+window.findNRooksSolution = function(n) { 
   var possible = generateBoards(n);
   var result;
 
-  // console.log('possible whole:', possible);
-
   for (var i = 0; i < possible.length; i++) {
-    // console.log('possible[i]', possible[i]);
     tempBoard = new Board(possible[i]);
-    // console.log('tempboard', tempBoard);
     if (!tempBoard.hasAnyRooksConflicts()) {
-      // console.log('this is solution', possible[i]);
-      // results.push(possible[i]);
       result = possible[i];
       break;
     }
   }
-  // .forEach(function(grid) {
-  //   var board = new Board(grid);
-  //   if (!board.hasAnyRowConflicts() && !board.hasAnyColConflicts()) {
-  //     return grid;
-  //   }
-  // });
-  // console.log(n);
-  // console.log('generateBoards(n) logs: ', generateBoards(n));
-
-  //console.log('Solutions is: ', solutions);
-  // var solution = solutions[0]; //fixme
-
-  // console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
-  // return solution;
-  // return results[0];
-  // return results[0];
-  console.log('solution is', result);
   return result;
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+
+
+  var solutionCount = generateBoards(n).length; //fixme
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
@@ -115,15 +94,28 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+  //.hasAnyQueensConflicts()
 
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+  var possible = generateBoards(n);
+  var result;
+
+  for (var i = 0; i < possible.length; i++) {
+    tempBoard = new Board(possible[i]);
+    if (!tempBoard.hasAnyQueensConflicts()) {
+      result = possible[i];
+      return result;
+    }
+  }
+  //return result;
+  return makeEmptyMatrix(n);
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = generateBoards(n).filter(function(item) {
+    var board = new Board(item);
+    return board.hasAnyQueensConflicts() === false;
+  }).length; //fixme
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
