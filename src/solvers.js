@@ -14,24 +14,34 @@
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
 window.generateRows = function(n) {
-  var results = []; //if n === 0, results should equal [[]];
+  var compilation = []; //if n === 0, results should equal [[]];
   var choices = _.range(n);
   
   var permutations = function(n, boardSoFar) {
  
     if (n === 0) {
-      results.push(boardSoFar);
+      compilation.push(boardSoFar);
       return;
     }
 
     for (var i = 0; i < choices.length; i++) {
       var currentChoice = choices[i];
-      permutations(n - 1, boardSoFar.concat(currentChoice));
+      if (boardSoFar[boardSoFar.length - 1] !== currentChoice) { 
+      // if (_.uniq(boardSoFar.concat(currentChoice)) === boardSoFar.concat(currentChoice)) { 
+        permutations(n - 1, boardSoFar.concat(currentChoice));
+      }
     }
   
   };
   permutations(n, []);
-  return results;
+
+  // var results = _.uniq(compilation).filter(function(item) {
+  //   return item.length === n;
+  // });
+
+  // return results;
+
+  return compilation;
 };
 
 window.generateBoards = function(n) {
@@ -40,14 +50,19 @@ window.generateBoards = function(n) {
   //for each of the rows returned from generateRows function
   return generateRows(n).map(function(rowItem) {
     var tempBoard = makeEmptyMatrix(n);
+
+
+
+
+
+
     rowItem.forEach(function(index, row) {
       tempBoard[row][index] = 1;
     });
     return tempBoard;
   });
-    //create the appropriate board with the pieces placed accordingly
-  //push each board to results or use map
-  //return results
+
+  //filter for only boards that have no col conflicts 
 };
 
 
@@ -55,16 +70,18 @@ window.generateBoards = function(n) {
 window.findNRooksSolution = function(n) {
   
   var possible = generateBoards(n);
-  var results = [];
+  var result;
+
+  // console.log('possible whole:', possible);
 
   for (var i = 0; i < possible.length; i++) {
-    console.log('possible[i]', possible[i]);
+    // console.log('possible[i]', possible[i]);
     tempBoard = new Board(possible[i]);
-    console.log('tempboard', tempBoard);
+    // console.log('tempboard', tempBoard);
     if (!tempBoard.hasAnyRooksConflicts()) {
-      console.log('this is solution', possible[i]);
+      // console.log('this is solution', possible[i]);
       // results.push(possible[i]);
-      // return possible[i];
+      result = possible[i];
       break;
     }
   }
@@ -84,6 +101,8 @@ window.findNRooksSolution = function(n) {
   // return solution;
   // return results[0];
   // return results[0];
+  console.log('solution is', result);
+  return result;
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
